@@ -1,71 +1,14 @@
----
-layout: default
-title: AI Cost Simulator
----
-
-# Simulador de Custos de APIs (LLMs)
-
-Bem-vindo ao simulador. Esta ferramenta foi projetada para calcular os custos estimados de processamento de prompts nas principais APIs de Inteligência Artificial do mercado, facilitando a tomada de decisão para integrações e roteamento de IA.
-
-## Tabela de Preços (Referência: 1 Milhão de Tokens)
-
-<table>
-  <thead>
-    <tr>
-      <th>Provedor</th>
-      <th>Modelo</th>
-      <th>Custo Input (US$)</th>
-      <th>Custo Output (US$)</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr><td>OpenAI</td><td>GPT-4o</td><td>$ 2.50</td><td>$ 10.00</td></tr>
-    <tr><td>OpenAI</td><td>GPT-4o mini</td><td>$ 0.15</td><td>$ 0.60</td></tr>
-    <tr><td>Anthropic</td><td>Claude 3.5 Sonnet</td><td>$ 3.00</td><td>$ 15.00</td></tr>
-    <tr><td>Anthropic</td><td>Claude 3.5 Haiku</td><td>$ 0.25</td><td>$ 1.25</td></tr>
-    <tr><td>Google</td><td>Gemini 1.5 Pro</td><td>$ 3.50</td><td>$ 10.50</td></tr>
-    <tr><td>Google</td><td>Gemini 1.5 Flash</td><td>$ 0.075</td><td>$ 0.30</td></tr>
-    <tr><td>Groq</td><td>Llama 3.1 8B</td><td>$ 0.05</td><td>Até $ 0.90</td></tr>
-    <tr><td>DeepSeek</td><td>DeepSeek Coder/Chat</td><td>$ 0.14</td><td>$ 0.28</td></tr>
-  </tbody>
-</table>
-
-<hr>
-
-## Área de Simulação
-
-<!-- 
-======================================================================
-ÁREA DOS DESENVOLVEDORES: 
-A interface abaixo está pronta. Por favor, implementem a lógica de 
-cálculo no bloco <script>. Os valores de Input/Output devem ser 
-divididos por 1.000.000 e multiplicados pelos preços da tabela acima.
-====================================================================== 
--->
-
-<div id="simulator-form" style="background: #f4f4f4; padding: 20px; border-radius: 8px; color: #333;">
-  <p>Insira o volume de tokens e escolha o modelo para prever o custo da sua operação.</p>
-  
-  <div style="margin-bottom: 10px;">
-    <label><strong>Tokens de Entrada (Input):</strong><br> 
-      <input type="number" id="inputTokens" placeholder="Ex: 500000" style="padding: 5px; width: 100%; max-width: 300px;">
-    </label>
-  </div>
-
-  <div style="margin-bottom: 10px;">
-    <label><strong>Tokens de Saída (Output):</strong><br> 
-      <input type="number" id="outputTokens" placeholder="Ex: 100000" style="padding: 5px; width: 100%; max-width: 300px;">
-    </label>
-  </div>
-
-  <div style="margin-bottom: 20px;">
+<div style="margin-bottom: 20px;">
     <label><strong>Selecione o Modelo:</strong><br>
       <select id="modelSelect" style="padding: 5px; width: 100%; max-width: 300px;">
         <option value="gpt4o">OpenAI - GPT-4o</option>
         <option value="gpt4omini">OpenAI - GPT-4o mini</option>
         <option value="claude35sonnet">Anthropic - Claude 3.5 Sonnet</option>
+        <option value="claude35haiku">Anthropic - Claude 3.5 Haiku</option>
+        <option value="gemini15pro">Google - Gemini 1.5 Pro</option>
         <option value="gemini15flash">Google - Gemini 1.5 Flash</option>
         <option value="llama31_8b">Groq - Llama 3.1 8B</option>
+        <option value="deepseek">DeepSeek - Coder/Chat</option>
       </select>
     </label>
   </div>
@@ -76,9 +19,29 @@ divididos por 1.000.000 e multiplicados pelos preços da tabela acima.
 </div>
 
 <script>
-  // TODO: Desenvolvedores, adicionem aqui o dicionário de dados (JSON) com os preços
-  // e a função calcularCusto() que captura os values dos inputs e atualiza o #resultado.
+  // Dicionário com os preços de TODOS os modelos por 1 milhão de tokens
+  const precosModelos = {
+    "gpt4o": { input: 2.50, output: 10.00 },
+    "gpt4omini": { input: 0.15, output: 0.60 },
+    "claude35sonnet": { input: 3.00, output: 15.00 },
+    "claude35haiku": { input: 0.25, output: 1.25 },
+    "gemini15pro": { input: 3.50, output: 10.50 },
+    "gemini15flash": { input: 0.075, output: 0.30 },
+    "llama31_8b": { input: 0.05, output: 0.90 },
+    "deepseek": { input: 0.14, output: 0.28 }
+  };
+
   function calcularCusto() {
-    alert("A lógica de cálculo JavaScript será implementada em breve pelos desenvolvedores.");
+    const inputTokens = parseFloat(document.getElementById("inputTokens").value) || 0;
+    const outputTokens = parseFloat(document.getElementById("outputTokens").value) || 0;
+    const modeloSelecionado = document.getElementById("modelSelect").value;
+
+    const precos = precosModelos[modeloSelecionado];
+
+    const custoInput = (inputTokens / 1000000) * precos.input;
+    const custoOutput = (outputTokens / 1000000) * precos.output;
+    const custoTotal = custoInput + custoOutput;
+
+    document.getElementById("resultado").innerText = "US$ " + custoTotal.toFixed(4);
   }
 </script>
