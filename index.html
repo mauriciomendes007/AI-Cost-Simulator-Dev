@@ -1,47 +1,88 @@
-<div style="margin-bottom: 20px;">
-    <label><strong>Selecione o Modelo:</strong><br>
-      <select id="modelSelect" style="padding: 5px; width: 100%; max-width: 300px;">
-        <option value="gpt4o">OpenAI - GPT-4o</option>
-        <option value="gpt4omini">OpenAI - GPT-4o mini</option>
-        <option value="claude35sonnet">Anthropic - Claude 3.5 Sonnet</option>
-        <option value="claude35haiku">Anthropic - Claude 3.5 Haiku</option>
-        <option value="gemini15pro">Google - Gemini 1.5 Pro</option>
-        <option value="gemini15flash">Google - Gemini 1.5 Flash</option>
-        <option value="llama31_8b">Groq - Llama 3.1 8B</option>
-        <option value="deepseek">DeepSeek - Coder/Chat</option>
+---
+layout: default
+title: AI Cost Simulator
+---
+
+# Simulador de Custos de APIs (LLMs)
+
+<div style="background: #f4f4f4; padding: 20px; border-radius: 8px; color: #333; margin-top: 20px;">
+  <p>Insira o volume de tokens e escolha qualquer modelo disponível globalmente para prever o custo.</p>
+  
+  <div style="margin-bottom: 15px;">
+    <label><strong>Tokens de Entrada (Input):</strong><br> 
+      <input type="number" id="inputTokens" placeholder="Ex: 500000" style="padding: 8px; width: 100%; max-width: 400px; margin-top: 5px;">
+    </label>
+  </div>
+
+  <div style="margin-bottom: 15px;">
+    <label><strong>Tokens de Saída (Output):</strong><br> 
+      <input type="number" id="outputTokens" placeholder="Ex: 100000" style="padding: 8px; width: 100%; max-width: 400px; margin-top: 5px;">
+    </label>
+  </div>
+
+  <div style="margin-bottom: 20px;">
+    <label><strong>Selecione o Modelo Global:</strong><br>
+      <select id="modelSelect" style="padding: 8px; width: 100%; max-width: 400px; margin-top: 5px;">
+        <option value="">Carregando modelos do mundo...</option>
       </select>
     </label>
   </div>
 
-  <button onclick="calcularCusto()" style="padding: 10px 15px; background: #0366d6; color: white; border: none; border-radius: 5px; cursor: pointer;">Calcular Custo</button>
+  <button onclick="calcularCusto()" style="padding: 10px 20px; background: #0366d6; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">Calcular Custo</button>
   
-  <h3 style="margin-top: 20px;">Custo Estimado: <span id="resultado" style="color: #28a745;">US$ 0.00</span></h3>
+  <h3 style="margin-top: 25px;">Custo Estimado: <span id="resultado" style="color: #28a745;">US$ 0.00</span></h3>
 </div>
 
 <script>
-  // Dicionário com os preços de TODOS os modelos por 1 milhão de tokens
-  const precosModelos = {
-    "gpt4o": { input: 2.50, output: 10.00 },
-    "gpt4omini": { input: 0.15, output: 0.60 },
-    "claude35sonnet": { input: 3.00, output: 15.00 },
-    "claude35haiku": { input: 0.25, output: 1.25 },
-    "gemini15pro": { input: 3.50, output: 10.50 },
-    "gemini15flash": { input: 0.075, output: 0.30 },
-    "llama31_8b": { input: 0.05, output: 0.90 },
-    "deepseek": { input: 0.14, output: 0.28 }
-  };
+  let precosModelos = {};
+
+  async function carregarModelos() {
+    try {
+      const response = await fetch("https://openrouter.ai/api/v1/models");
+      const data = await response.json();
+      const select = document.getElementById("modelSelect");
+      select.innerHTML = ""; 
+
+      const modelosOrdenados = data.data.sort((a, b) => a.name.localeCompare(b.name));
+
+      modelosOrdenados.forEach(model => {
+        const pPrompt = model.pricing && model.pricing.prompt ? parseFloat(model.pricing.prompt) : 0;
+        const pCompletion = model.pricing && model.pricing.completion ? parseFloat(model.pricing.completion) : 0;
+
+        precosModelos[model.id] = {
+          input: pPrompt,
+          output: pCompletion
+        };
+
+        const option = document.createElement("option");
+        option.value = model.id;
+        option.textContent = `${model.name}`;
+        select.appendChild(option);
+      });
+    } catch (error) {
+      document.getElementById("modelSelect").innerHTML = '<option value="">Erro ao carregar modelos da rede</option>';
+      console.error("Erro ao buscar modelos:", error);
+    }
+  }
 
   function calcularCusto() {
     const inputTokens = parseFloat(document.getElementById("inputTokens").value) || 0;
     const outputTokens = parseFloat(document.getElementById("outputTokens").value) || 0;
     const modeloSelecionado = document.getElementById("modelSelect").value;
 
+    if (!modeloSelecionado || !precosModelos[modeloSelecionado]) {
+      alert("Por favor, selecione um modelo válido.");
+      return;
+    }
+
     const precos = precosModelos[modeloSelecionado];
 
-    const custoInput = (inputTokens / 1000000) * precos.input;
-    const custoOutput = (outputTokens / 1000000) * precos.output;
+    const custoInput = inputTokens * precos.input;
+    const custoOutput = outputTokens * precos.output;
     const custoTotal = custoInput + custoOutput;
 
-    document.getElementById("resultado").innerText = "US$ " + custoTotal.toFixed(4);
+    document.getElementById("resultado").innerText = "US$ " + custoTotal.toFixed(6);
   }
+
+  carregarModelos();
 </script>
