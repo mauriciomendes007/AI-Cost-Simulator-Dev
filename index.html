@@ -1,88 +1,686 @@
----
-layout: default
-title: AI Cost Simulator
----
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Cost Simulator - Calculadora de Custos de APIs LLM</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-# Simulador de Custos de APIs (LLMs)
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
 
-<div style="background: #f4f4f4; padding: 20px; border-radius: 8px; color: #333; margin-top: 20px;">
-  <p>Insira o volume de tokens e escolha qualquer modelo disponível globalmente para prever o custo.</p>
-  
-  <div style="margin-bottom: 15px;">
-    <label><strong>Tokens de Entrada (Input):</strong><br> 
-      <input type="number" id="inputTokens" placeholder="Ex: 500000" style="padding: 8px; width: 100%; max-width: 400px; margin-top: 5px;">
-    </label>
-  </div>
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
 
-  <div style="margin-bottom: 15px;">
-    <label><strong>Tokens de Saída (Output):</strong><br> 
-      <input type="number" id="outputTokens" placeholder="Ex: 100000" style="padding: 8px; width: 100%; max-width: 400px; margin-top: 5px;">
-    </label>
-  </div>
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
 
-  <div style="margin-bottom: 20px;">
-    <label><strong>Selecione o Modelo Global:</strong><br>
-      <select id="modelSelect" style="padding: 8px; width: 100%; max-width: 400px; margin-top: 5px;">
-        <option value="">Carregando modelos do mundo...</option>
-      </select>
-    </label>
-  </div>
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
 
-  <button onclick="calcularCusto()" style="padding: 10px 20px; background: #0366d6; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">Calcular Custo</button>
-  
-  <h3 style="margin-top: 25px;">Custo Estimado: <span id="resultado" style="color: #28a745;">US$ 0.00</span></h3>
-</div>
+        header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
 
-<script>
-  let precosModelos = {};
+        .main-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
 
-  async function carregarModelos() {
-    try {
-      const response = await fetch("https://openrouter.ai/api/v1/models");
-      const data = await response.json();
-      const select = document.getElementById("modelSelect");
-      select.innerHTML = ""; 
+        .form-group {
+            margin-bottom: 20px;
+        }
 
-      const modelosOrdenados = data.data.sort((a, b) => a.name.localeCompare(b.name));
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+            font-size: 0.95em;
+        }
 
-      modelosOrdenados.forEach(model => {
-        const pPrompt = model.pricing && model.pricing.prompt ? parseFloat(model.pricing.prompt) : 0;
-        const pCompletion = model.pricing && model.pricing.completion ? parseFloat(model.pricing.completion) : 0;
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+            font-family: inherit;
+        }
 
-        precosModelos[model.id] = {
-          input: pPrompt,
-          output: pCompletion
-        };
+        input[type="number"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
 
-        const option = document.createElement("option");
-        option.value = model.id;
-        option.textContent = `${model.name}`;
-        select.appendChild(option);
-      });
-    } catch (error) {
-      document.getElementById("modelSelect").innerHTML = '<option value="">Erro ao carregar modelos da rede</option>';
-      console.error("Erro ao buscar modelos:", error);
-    }
-  }
+        input[type="number"]::placeholder {
+            color: #999;
+        }
 
-  function calcularCusto() {
-    const inputTokens = parseFloat(document.getElementById("inputTokens").value) || 0;
-    const outputTokens = parseFloat(document.getElementById("outputTokens").value) || 0;
-    const modeloSelecionado = document.getElementById("modelSelect").value;
+        .input-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
 
-    if (!modeloSelecionado || !precosModelos[modeloSelecionado]) {
-      alert("Por favor, selecione um modelo válido.");
-      return;
-    }
+        @media (max-width: 600px) {
+            .input-wrapper {
+                grid-template-columns: 1fr;
+            }
+        }
 
-    const precos = precosModelos[modeloSelecionado];
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin: 25px 0;
+            flex-wrap: wrap;
+        }
 
-    const custoInput = inputTokens * precos.input;
-    const custoOutput = outputTokens * precos.output;
-    const custoTotal = custoInput + custoOutput;
+        button {
+            flex: 1;
+            min-width: 150px;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
 
-    document.getElementById("resultado").innerText = "US$ " + custoTotal.toFixed(6);
-  }
+        .btn-calcular {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
 
-  carregarModelos();
-</script>
+        .btn-calcular:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-calcular:active {
+            transform: translateY(0);
+        }
+
+        .btn-limpar {
+            background: #f5f5f5;
+            color: #333;
+            border: 2px solid #e0e0e0;
+        }
+
+        .btn-limpar:hover {
+            background: #eeeeee;
+            border-color: #999;
+        }
+
+        .resultado-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 30px;
+            border-left: 5px solid #667eea;
+        }
+
+        .resultado-card.hidden {
+            display: none;
+        }
+
+        .resultado-title {
+            font-size: 0.9em;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .resultado-valor {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .detalhes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .detalhe-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .detalhe-label {
+            font-size: 0.85em;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
+
+        .detalhe-valor {
+            font-size: 1.4em;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .modelo-info {
+            background: #f0f3ff;
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-size: 0.9em;
+            color: #555;
+            margin-top: 15px;
+            border-left: 3px solid #667eea;
+        }
+
+        .historico-section {
+            margin-top: 40px;
+        }
+
+        .historico-section h3 {
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .historico-table {
+            width: 100%;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .historico-table.hidden {
+            display: none;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #f8f9fa;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #555;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 0.95em;
+        }
+
+        tbody tr:hover {
+            background: #f9f9f9;
+        }
+
+        .modelo-nome {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .historico-vazio {
+            text-align: center;
+            padding: 30px;
+            color: #999;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            border-left: 4px solid #f5c6cb;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .model-loading {
+            text-align: center;
+            color: #666;
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            margin-top: 40px;
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 600px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .main-card {
+                padding: 20px;
+            }
+
+            .resultado-valor {
+                font-size: 2em;
+            }
+
+            button {
+                min-width: 120px;
+                padding: 12px 20px;
+                font-size: 0.95em;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            button {
+                flex: unset;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>💰 AI Cost Simulator</h1>
+            <p>Calculadora precisa de custos para APIs de LLM</p>
+        </header>
+
+        <div class="main-card">
+            <div class="error-message" id="errorMessage"></div>
+
+            <div class="form-group">
+                <label for="modelSelect">🤖 Selecione o Modelo de IA</label>
+                <select id="modelSelect">
+                    <option value="">
+                        <span class="loading-spinner"></span>Carregando modelos...
+                    </option>
+                </select>
+                <div class="modelo-info" id="modeloInfo" style="display: none;"></div>
+            </div>
+
+            <div class="input-wrapper">
+                <div class="form-group">
+                    <label for="inputTokens">📥 Tokens de Entrada (Input)</label>
+                    <input 
+                        type="number" 
+                        id="inputTokens" 
+                        placeholder="Ex: 500000" 
+                        min="0" 
+                        step="1000"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="outputTokens">📤 Tokens de Saída (Output)</label>
+                    <input 
+                        type="number" 
+                        id="outputTokens" 
+                        placeholder="Ex: 100000" 
+                        min="0" 
+                        step="1000"
+                    >
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn-calcular" onclick="calcularCusto()">
+                    ✓ Calcular Custo
+                </button>
+                <button class="btn-limpar" onclick="limparForm()">
+                    ✕ Limpar Formulário
+                </button>
+            </div>
+
+            <div class="resultado-card hidden" id="resultadoCard">
+                <div class="resultado-title">Custo Estimado Total</div>
+                <div class="resultado-valor" id="resultado">US$ 0.00</div>
+
+                <div class="detalhes-grid">
+                    <div class="detalhe-item">
+                        <div class="detalhe-label">Custo de Entrada</div>
+                        <div class="detalhe-valor" id="custoInput">US$ 0.00</div>
+                    </div>
+                    <div class="detalhe-item">
+                        <div class="detalhe-label">Custo de Saída</div>
+                        <div class="detalhe-valor" id="custoOutput">US$ 0.00</div>
+                    </div>
+                    <div class="detalhe-item">
+                        <div class="detalhe-label">Modelo Selecionado</div>
+                        <div class="detalhe-valor" id="modeloNome" style="font-size: 1.1em;">-</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="historico-section">
+            <h3>📊 Histórico de Cálculos</h3>
+            <div class="historico-table" id="historico">
+                <div class="historico-vazio">Nenhum cálculo realizado ainda</div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>AI Cost Simulator • Desenvolvido para ajudar no cálculo de custos de APIs de IA</p>
+    </footer>
+
+    <script>
+        let precosModelos = {};
+        let historicoCalculos = [];
+
+        // Carrega os cálculos salvos do localStorage
+        function carregarHistorico() {
+            const salvo = localStorage.getItem('historicoCalculos');
+            if (salvo) {
+                historicoCalculos = JSON.parse(salvo);
+                atualizarTabelaHistorico();
+            }
+        }
+
+        // Salva um novo cálculo no histórico
+        function salvarNoHistorico(modelo, input, output, custoInput, custoOutput, custoTotal) {
+            const agora = new Date();
+            const timestamp = agora.toLocaleString('pt-BR');
+
+            historicoCalculos.unshift({
+                timestamp,
+                modelo,
+                input: parseInt(input),
+                output: parseInt(output),
+                custoInput: parseFloat(custoInput),
+                custoOutput: parseFloat(custoOutput),
+                custoTotal: parseFloat(custoTotal)
+            });
+
+            // Mantém apenas os últimos 50 cálculos
+            if (historicoCalculos.length > 50) {
+                historicoCalculos.pop();
+            }
+
+            localStorage.setItem('historicoCalculos', JSON.stringify(historicoCalculos));
+            atualizarTabelaHistorico();
+        }
+
+        // Atualiza a tabela de histórico
+        function atualizarTabelaHistorico() {
+            const container = document.getElementById('historico');
+
+            if (historicoCalculos.length === 0) {
+                container.innerHTML = '<div class="historico-vazio">Nenhum cálculo realizado ainda</div>';
+                container.classList.add('hidden');
+                return;
+            }
+
+            container.classList.remove('hidden');
+
+            let html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Data/Hora</th>
+                            <th>Modelo</th>
+                            <th>Input Tokens</th>
+                            <th>Output Tokens</th>
+                            <th>Custo Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            historicoCalculos.forEach(calc => {
+                html += `
+                    <tr>
+                        <td>${calc.timestamp}</td>
+                        <td><span class="modelo-nome">${calc.modelo}</span></td>
+                        <td>${calc.input.toLocaleString('pt-BR')}</td>
+                        <td>${calc.output.toLocaleString('pt-BR')}</td>
+                        <td><strong>US$ ${calc.custoTotal.toFixed(8)}</strong></td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                    </tbody>
+                </table>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        // Carrega modelos da API OpenRouter
+        async function carregarModelos() {
+            try {
+                const select = document.getElementById("modelSelect");
+                select.innerHTML = '<option value="">⏳ Carregando modelos da rede...</option>';
+
+                const response = await fetch("https://openrouter.ai/api/v1/models");
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+                const data = await response.json();
+                if (!data.data || !Array.isArray(data.data)) throw new Error("Formato de resposta inválido");
+
+                select.innerHTML = "";
+                const modelosOrdenados = data.data
+                    .filter(m => m.pricing && m.pricing.prompt !== undefined)
+                    .sort((a, b) => a.name.localeCompare(b.name));
+
+                if (modelosOrdenados.length === 0) {
+                    throw new Error("Nenhum modelo com preço disponível");
+                }
+
+                modelosOrdenados.forEach(model => {
+                    const pPrompt = parseFloat(model.pricing.prompt) || 0;
+                    const pCompletion = parseFloat(model.pricing.completion) || 0;
+
+                    precosModelos[model.id] = {
+                        input: pPrompt,
+                        output: pCompletion,
+                        name: model.name
+                    };
+
+                    const option = document.createElement("option");
+                    option.value = model.id;
+                    option.textContent = `${model.name}`;
+                    select.appendChild(option);
+                });
+
+                // Seleciona o primeiro modelo por padrão
+                if (modelosOrdenados.length > 0) {
+                    select.value = modelosOrdenados[0].id;
+                    exibirInfoModelo(modelosOrdenados[0].id);
+                }
+
+            } catch (error) {
+                mostrarErro("Erro ao carregar modelos: " + error.message);
+                console.error("Erro ao buscar modelos:", error);
+                document.getElementById("modelSelect").innerHTML = 
+                    '<option value="">❌ Erro ao carregar modelos. Tente recarregar a página.</option>';
+            }
+        }
+
+        // Exibe informações do modelo selecionado
+        function exibirInfoModelo(modelId) {
+            const infoDiv = document.getElementById("modeloInfo");
+            const modelo = precosModelos[modelId];
+
+            if (modelo) {
+                const precoInputMilhar = (modelo.input * 1000).toFixed(6);
+                const precoOutputMilhar = (modelo.output * 1000).toFixed(6);
+                
+                infoDiv.innerHTML = `
+                    <strong>${modelo.name}</strong><br>
+                    Preço: US$ ${precoInputMilhar} / 1k input tokens | US$ ${precoOutputMilhar} / 1k output tokens
+                `;
+                infoDiv.style.display = 'block';
+            }
+        }
+
+        // Calcula o custo
+        function calcularCusto() {
+            const errorDiv = document.getElementById("errorMessage");
+            errorDiv.classList.remove('show');
+
+            const inputTokens = parseFloat(document.getElementById("inputTokens").value);
+            const outputTokens = parseFloat(document.getElementById("outputTokens").value);
+            const modeloSelecionado = document.getElementById("modelSelect").value;
+
+            // Validações
+            if (!modeloSelecionado) {
+                mostrarErro("Por favor, selecione um modelo.");
+                return;
+            }
+
+            if (isNaN(inputTokens) || inputTokens < 0) {
+                mostrarErro("Tokens de entrada deve ser um número válido e não negativo.");
+                return;
+            }
+
+            if (isNaN(outputTokens) || outputTokens < 0) {
+                mostrarErro("Tokens de saída deve ser um número válido e não negativo.");
+                return;
+            }
+
+            if (inputTokens === 0 && outputTokens === 0) {
+                mostrarErro("Por favor, insira valores maiores que zero para input ou output.");
+                return;
+            }
+
+            if (!precosModelos[modeloSelecionado]) {
+                mostrarErro("Modelo selecionado não encontrado. Tente novamente.");
+                return;
+            }
+
+            const precos = precosModelos[modeloSelecionado];
+            const custoInput = inputTokens * precos.input;
+            const custoOutput = outputTokens * precos.output;
+            const custoTotal = custoInput + custoOutput;
+
+            // Exibe resultado
+            document.getElementById("resultado").innerText = "US$ " + custoTotal.toFixed(8);
+            document.getElementById("custoInput").innerText = "US$ " + custoInput.toFixed(8);
+            document.getElementById("custoOutput").innerText = "US$ " + custoOutput.toFixed(8);
+            document.getElementById("modeloNome").innerText = precos.name;
+            
+            document.getElementById("resultadoCard").classList.remove("hidden");
+
+            // Salva no histórico
+            salvarNoHistorico(precos.name, inputTokens, outputTokens, custoInput, custoOutput, custoTotal);
+        }
+
+        // Limpa o formulário
+        function limparForm() {
+            document.getElementById("inputTokens").value = "";
+            document.getElementById("outputTokens").value = "";
+            document.getElementById("resultadoCard").classList.add("hidden");
+            document.getElementById("errorMessage").classList.remove('show');
+        }
+
+        // Exibe mensagem de erro
+        function mostrarErro(mensagem) {
+            const errorDiv = document.getElementById("errorMessage");
+            errorDiv.textContent = "⚠️ " + mensagem;
+            errorDiv.classList.add('show');
+        }
+
+        // Event listeners
+        document.getElementById("modelSelect").addEventListener("change", function() {
+            if (this.value) {
+                exibirInfoModelo(this.value);
+            }
+        });
+
+        // Permite calcular com Enter
+        document.getElementById("inputTokens").addEventListener("keypress", function(e) {
+            if (e.key === "Enter") calcularCusto();
+        });
+
+        document.getElementById("outputTokens").addEventListener("keypress", function(e) {
+            if (e.key === "Enter") calcularCusto();
+        });
+
+        // Inicializa
+        window.addEventListener("load", function() {
+            carregarHistorico();
+            carregarModelos();
+        });
+    </script>
+</body>
+</html>
