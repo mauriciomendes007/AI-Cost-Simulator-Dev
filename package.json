@@ -1,0 +1,101 @@
+{
+  "name": "AI Cost Simulator",
+  "version": "1.0.0",
+  "description": "Calculadora inteligente de custos para APIs de LLM com atualização automática de preços",
+  "author": "Mauricio Mendes",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mauriciomendes007/AI-Cost-Simulator-Dev"
+  },
+  "scripts": {
+    "update-prices": "node update-prices.js",
+    "test": "echo 'Testes básicos de funcionalidade'"
+  },
+  "keywords": [
+    "AI",
+    "LLM",
+    "API",
+    "Cost Calculator",
+    "Pricing",
+    "OpenAI",
+    "Claude",
+    "Gemini"
+  ],
+  "keywords_pt": [
+    "IA",
+    "LLM",
+    "API",
+    "Calculadora de Custos",
+    "Preços",
+    "Modelos de Linguagem"
+  ],
+  "features": [
+    "Cálculo preciso de custos",
+    "Atualização automática de preços a cada 2 dias",
+    "Suporte a 100+ modelos globais",
+    "Interface responsiva",
+    "Histórico local de cálculos",
+    "Validações robustas",
+    "Sem necessidade de backend"
+  ],
+  "supported_providers": [
+    {
+      "name": "OpenRouter",
+      "status": "active",
+      "models_count": "100+",
+      "url": "https://openrouter.ai"
+    },
+    {
+      "name": "OpenAI",
+      "status": "planned",
+      "models_count": "20+",
+      "url": "https://openai.com"
+    },
+    {
+      "name": "Anthropic",
+      "status": "planned",
+      "models_count": "10+",
+      "url": "https://anthropic.com"
+    },
+    {
+      "name": "Google",
+      "status": "planned",
+      "models_count": "15+",
+      "url": "https://google.com/ai"
+    },
+    {
+      "name": "Meta Llama",
+      "status": "planned",
+      "models_count": "5+",
+      "url": "https://www.meta.com"
+    },
+    {
+      "name": "Mistral AI",
+      "status": "planned",
+      "models_count": "8+",
+      "url": "https://mistral.ai"
+    }
+  ],
+  "update_schedule": "a cada 2 dias",
+  "storage": "LocalStorage (navegador)",
+  "technology_stack": [
+    "HTML5",
+    "CSS3",
+    "Vanilla JavaScript",
+    "OpenRouter API",
+    "GitHub Actions"
+  ],
+  "deployment": "GitHub Pages",
+  "contributions_welcome": true,
+  "development": {
+    "requires_backend": false,
+    "requires_api_key": false,
+    "browser_support": [
+      "Chrome 90+",
+      "Firefox 88+",
+      "Safari 14+",
+      "Edge 90+"
+    ]
+  }
+}
