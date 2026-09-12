@@ -1,379 +1,521 @@
-# Guia de Contribuição - AI Cost Simulator
+# Contributing to AI Cost Simulator
 
-Obrigado por considerar contribuir para o AI Cost Simulator! Este documento fornece diretrizes e instruções para ajudar no desenvolvimento do projeto.
+Thank you for considering contributing to AI Cost Simulator! We welcome contributions from developers, AI systems, and the community.
 
-## 📋 Código de Conduta
+## 📋 Code of Conduct
 
-Este projeto adere a um Código de Conduta. Ao participar, você concorda em manter um ambiente respeitoso e inclusivo.
+This project is committed to providing a welcoming and inclusive environment. By participating, you agree to maintain a respectful and professional atmosphere.
 
-## 🚀 Como Começar
+## 🚀 Getting Started
 
-### Pré-requisitos
-- Git instalado
-- Navegador web moderno (Chrome, Firefox, Safari, Edge)
-- Node.js 16+ (opcional, para scripts)
-- Conta GitHub
+### Prerequisites
+- Git installed on your system
+- Modern web browser (Chrome, Firefox, Safari, Edge)
+- Node.js 16+ (optional, for automation scripts)
+- GitHub account
 
-### Configuração do Ambiente
+### Setup Your Development Environment
 
-1. **Fork o repositório**
+1. **Fork the Repository**
+   - Visit https://github.com/mauriciomendes007/AI-Cost-Simulator-Dev
+   - Click the "Fork" button in the top-right corner
+   - This creates a copy under your account
+
+2. **Clone Your Fork**
    ```bash
-   # Visite https://github.com/mauriciomendes007/AI-Cost-Simulator-Dev
-   # Clique em "Fork" no canto superior direito
-   ```
-
-2. **Clone seu fork**
-   ```bash
-   git clone https://github.com/SEU-USUARIO/AI-Cost-Simulator-Dev.git
+   git clone https://github.com/YOUR-USERNAME/AI-Cost-Simulator-Dev.git
    cd AI-Cost-Simulator-Dev
    ```
 
-3. **Crie uma branch para sua feature**
+3. **Create a Feature Branch**
    ```bash
-   git checkout -b feature/sua-feature
-   # ou
-   git checkout -b fix/seu-bugfix
+   git checkout -b feature/your-feature-name
+   # or for bug fixes:
+   git checkout -b fix/your-bug-name
    ```
 
-4. **Abra `index.html` no navegador**
+4. **Open the Application Locally**
    ```bash
-   # Abra direto ou use um servidor local
+   # Option 1: Open directly in browser
+   open index.html
+   
+   # Option 2: Use Python's built-in server
    python -m http.server 8000
-   # Acesse http://localhost:8000
+   # Then visit http://localhost:8000
+   
+   # Option 3: Use Node's http-server
+   npx http-server
    ```
 
-## 🎯 Tipos de Contribuições
+## 🎯 Types of Contributions
 
-### 🐛 Relatórios de Bugs
+### 🐛 Bug Reports
 
-Encontrou um bug? Abra uma issue com:
+Found an issue? Help us fix it:
 
-```markdown
-## Descrição do Bug
-[Descrição clara do problema]
-
-## Passos para Reproduzir
-1. Abra a calculadora
-2. [passo 2]
-3. [passo 3]
-
-## Comportamento Esperado
-[O que deveria acontecer]
-
-## Comportamento Atual
-[O que está acontecendo]
-
-## Screenshots
-[Se aplicável]
-
-## Ambiente
-- Browser: [Chrome, Firefox, Safari]
-- SO: [Windows, macOS, Linux]
-- Versão: [se aplicável]
-```
-
-### ✨ Novas Funcionalidades
-
-Tem uma ideia? Abra uma issue primeiro para discussão:
+1. Go to [Issues](https://github.com/mauriciomendes007/AI-Cost-Simulator-Dev/issues)
+2. Click "New Issue"
+3. Use this template:
 
 ```markdown
-## Descrição da Feature
-[Descrição clara da funcionalidade]
+## Bug Description
+[Clear, concise description of the issue]
 
-## Benefício
-[Por que isso é importante?]
+## Steps to Reproduce
+1. Open the calculator
+2. [Step 2]
+3. [Step 3]
+4. [Error occurs]
 
-## Casos de Uso
-- [Caso 1]
-- [Caso 2]
+## Expected Behavior
+[What should happen]
 
-## Possível Implementação
-[Se tiver ideias, compartilhe]
+## Actual Behavior
+[What actually happened]
+
+## Screenshots/Video
+[If applicable]
+
+## Environment
+- Browser: Chrome 120 / Firefox 121 / Safari 17 / Edge 120
+- Operating System: Windows 11 / macOS 14 / Ubuntu 22.04
+- Device: Desktop / Tablet / Mobile
+
+## Additional Context
+[Any other relevant information]
 ```
 
-## 💻 Desenvolvimento
+### ✨ Feature Requests
 
-### Estrutura do Projeto
+Have an idea? Share it:
+
+1. Open a [Discussion](https://github.com/mauriciomendes007/AI-Cost-Simulator-Dev/discussions) or Issue
+2. Include:
+
+```markdown
+## Feature Description
+[Clear description of the feature]
+
+## Benefit
+[Why is this important? Who benefits?]
+
+## Use Cases
+- [Use case 1]
+- [Use case 2]
+- [Use case 3]
+
+## Proposed Implementation
+[Optional: How you might implement this]
+
+## Acceptance Criteria
+- [ ] Criterion 1
+- [ ] Criterion 2
+```
+
+## 💻 Code Development
+
+### Project Structure
 
 ```
 AI-Cost-Simulator-Dev/
-├── index.html              # Arquivo principal da aplicação
-├── package.json            # Metadados do projeto
-├── models-data.json        # Cache de preços dos modelos
-├── update-prices-workflow.yml # Workflow de atualização
-├── README.md               # Documentação principal
-├── CONTRIBUTING.md         # Este arquivo
+├── index.html                      # Main calculator application
+├── package.json                    # Project metadata & dependencies
+├── models-data.json               # Cached model pricing data
+├── update-prices-workflow.yml      # GitHub Actions automation
+├── README.md                       # Documentation (English)
+├── CONTRIBUTING.md                # This file
 └── .github/
-    └── workflows/          # GitHub Actions (a ser configurado)
+    └── workflows/                 # CI/CD configurations (to be added)
 ```
 
-### Arquitetura
+### Code Standards
 
-**Frontend**: HTML + CSS + Vanilla JavaScript
-- Sem dependências externas
-- Usa LocalStorage para dados persistentes
-- Integra com OpenRouter API
+#### JavaScript Best Practices
 
-**Backend**: GitHub Actions (opcional)
-- Atualiza preços automaticamente
-- Executa a cada 2 dias
-
-### Padrões de Código
-
-#### JavaScript
 ```javascript
-// Use nomes descritivos
-function calcularCustoTotal() { }
+// Use descriptive variable names
+const inputTokenCount = 50000;
+const modelPricingData = { input: 0.0001, output: 0.0002 };
 
-// Use const por padrão
-const modelo = precosModelos[modelId];
+// Prefer const over let, avoid var
+const immutableValue = 42;
+let mutableValue = 0;
+// const isPreferred = true; (use unless reassignment needed)
 
-// Adicione comentários para lógica complexa
-// Filtra modelos que têm preço definido
-const modelosValidos = data.filter(m => m.pricing?.prompt);
+// Use arrow functions for callbacks
+const calculateCost = (tokens, price) => tokens * price;
 
-// Use async/await
-async function carregarDados() {
+// Add comments for complex logic
+// Filters out models without pricing data to prevent calculation errors
+const validModels = allModels.filter(m => m.pricing?.prompt !== undefined);
+
+// Use async/await for cleaner async code
+async function fetchModelData() {
   try {
-    const response = await fetch(url);
+    const response = await fetch(apiUrl);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Erro:', error);
+    console.error('Failed to fetch models:', error);
+    showError('Unable to load models. Please try again.');
   }
+}
+
+// Input validation
+function validateTokens(tokens) {
+  if (typeof tokens !== 'number') return false;
+  if (tokens < 0) return false;
+  if (!isFinite(tokens)) return false;
+  return true;
 }
 ```
 
-#### CSS
+#### CSS Best Practices
+
 ```css
-/* Use variáveis CSS */
+/* Use CSS variables for consistency */
 :root {
-  --cor-primaria: #667eea;
-  --cor-secundaria: #764ba2;
-  --espacamento: 1rem;
+  --color-primary: #667eea;
+  --color-secondary: #764ba2;
+  --spacing-unit: 1rem;
+  --border-radius: 8px;
 }
 
-/* Mobile-first */
-.container {
+/* Mobile-first approach */
+.button {
   width: 100%;
+  padding: var(--spacing-unit);
 }
 
 @media (min-width: 768px) {
-  .container {
-    max-width: 900px;
+  .button {
+    width: auto;
   }
 }
 
-/* BEM naming */
-.btn-calcular { }
-.btn-calcular:hover { }
-```
+/* Use BEM naming convention */
+.form-group { }
+.form-group__label { }
+.form-group__input { }
+.form-group__error { }
 
-## 🔄 Workflow de Contribuição
+/* Group related styles */
+.btn-primary {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  color: white;
+  padding: 12px 24px;
+  border-radius: var(--border-radius);
+  border: none;
+  cursor: pointer;
+}
 
-### 1. Faça suas mudanças
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
 
-Edite os arquivos necessários:
-- **index.html**: Para interface/lógica
-- **package.json**: Para metadados
-- **README.md**: Para documentação
-- **update-prices-workflow.yml**: Para automação
-
-### 2. Teste suas mudanças
-
-```bash
-# Abra em múltiplos navegadores
-# Teste em mobile também
-# Verifique o console (F12) para erros
-```
-
-### 3. Commit com mensagens claras
-
-```bash
-git add .
-git commit -m "feat: adicionar suporte para moedas múltiplas"
-# ou
-git commit -m "fix: corrigir cálculo de tokens"
-# ou
-git commit -m "docs: atualizar guia de contribuição"
-```
-
-**Prefixos recomendados:**
-- `feat:` - Nova funcionalidade
-- `fix:` - Correção de bug
-- `docs:` - Documentação
-- `style:` - Formatação (sem lógica)
-- `refactor:` - Refatoração
-- `test:` - Testes
-- `perf:` - Performance
-- `chore:` - Tarefas administrativas
-
-### 4. Push para seu fork
-
-```bash
-git push origin feature/sua-feature
-```
-
-### 5. Abra um Pull Request
-
-- Vá para https://github.com/mauriciomendes007/AI-Cost-Simulator-Dev
-- Clique em "New Pull Request"
-- Selecione sua branch
-- Preencha o template:
-
-```markdown
-## Descrição
-[O que esta PR faz?]
-
-## Tipo de Mudança
-- [ ] Nova funcionalidade
-- [ ] Correção de bug
-- [ ] Mudança que quebra compatibilidade
-- [ ] Atualização de documentação
-
-## Checklist
-- [ ] Testei no Chrome
-- [ ] Testei no Firefox
-- [ ] Testei em mobile
-- [ ] Atualizei a documentação
-- [ ] Meu código segue o estilo do projeto
-
-## Screenshots/Video
-[Se aplicável]
-
-## Issues Relacionadas
-Closes #123
-```
-
-## 📊 Melhorias Prioritárias
-
-### 🔴 Alta Prioridade
-- [ ] Adicionar mais fontes de preços (OpenAI, Anthropic, Google)
-- [ ] Suporte para múltiplas moedas
-- [ ] Gráficos comparativos entre modelos
-- [ ] Exportar histórico em CSV/JSON
-
-### 🟡 Média Prioridade
-- [ ] Integração com APIs de billing reais
-- [ ] Análise de tendências de preço
-- [ ] Favoritar modelos
-- [ ] Compartilhar cálculos
-
-### 🟢 Baixa Prioridade
-- [ ] Temas (light/dark)
-- [ ] Múltiplos idiomas
-- [ ] Atalhos de teclado
-- [ ] Notificações de mudança de preço
-
-## 🔧 Scripts Úteis
-
-```bash
-# Atualizar preços manualmente
-node update-prices.js
-
-# Verificar sintaxe (se tiver Node.js)
-npm test
-
-# Limpar histórico (execute no console do navegador)
-localStorage.clear()
-```
-
-## 📝 Documentação
-
-### Comentar Código
-```javascript
-/**
- * Calcula o custo total baseado em tokens
- * @param {number} inputTokens - Tokens de entrada
- * @param {number} outputTokens - Tokens de saída
- * @param {Object} priceData - Dados de preço do modelo
- * @returns {number} Custo total em USD
- */
-function calcularCusto(inputTokens, outputTokens, priceData) {
-  return (inputTokens * priceData.input) + (outputTokens * priceData.output);
+.btn-primary:active {
+  transform: translateY(0);
 }
 ```
 
-### README
-- Mantenha atualizado com novas features
-- Adicione exemplos de uso
-- Explique mudanças importantes
+### Commit Message Standards
 
-## 🧪 Testes
+Follow [Conventional Commits](https://www.conventionalcommits.org/):
 
-### Teste Manual
-1. Abra a calculadora
-2. Teste cada funcionalidade
-3. Verifique em múltiplos navegadores
-4. Teste responsividade (mobile)
-5. Verifique console para erros
+```bash
+# Format: <type>(<scope>): <subject>
 
-### Casos de Teste
-```javascript
-// Teste casos extremos
-- Valores 0
-- Valores muito grandes
-- Caracteres especiais
-- Sem modelo selecionado
-- Conexão de rede perdida
+# Examples:
+git commit -m "feat(calculator): add multi-currency support"
+git commit -m "fix(api): correct exchange rate calculation"
+git commit -m "docs(readme): update installation instructions"
+git commit -m "style(css): improve button styling consistency"
+git commit -m "refactor(js): simplify model loading logic"
+git commit -m "perf(storage): optimize localStorage caching"
+git commit -m "test(validation): add input validation tests"
 ```
 
-## 🚨 Reporting Issues
+**Valid prefixes:**
+- `feat:` - New feature
+- `fix:` - Bug fix
+- `docs:` - Documentation
+- `style:` - Code formatting (no logic changes)
+- `refactor:` - Code reorganization (no behavior changes)
+- `perf:` - Performance improvements
+- `test:` - Testing additions
+- `chore:` - Build, CI, dependencies
 
-### Template de Issue
+## 🔄 Pull Request Workflow
+
+### 1. Make Your Changes
+
+Edit files in your feature branch:
+- **UI/Functionality**: Update `index.html`
+- **Project Info**: Update `package.json`
+- **Documentation**: Update `README.md` or `CONTRIBUTING.md`
+- **Automation**: Update `.yml` workflow files
+
+### 2. Test Your Changes
+
+**Browser Testing:**
+```bash
+# Test in at least 2 browsers
+- Chrome/Chromium (latest)
+- Firefox (latest)
+- Safari (if on macOS)
+- Edge (if on Windows)
+```
+
+**Manual Testing Checklist:**
+- [ ] Calculator loads correctly
+- [ ] Models load from API
+- [ ] Cost calculation works
+- [ ] All currencies display correctly
+- [ ] History is saved to LocalStorage
+- [ ] API documentation is clear
+- [ ] Mobile layout is responsive
+- [ ] No console errors (F12)
+- [ ] Form validation works
+- [ ] Error messages display properly
+
+### 3. Commit Your Work
+
+```bash
+git add .
+git commit -m "feat(calculator): add support for JPY currency"
+git commit -m "fix(api): improve error handling for failed requests"
+```
+
+Keep commits logical and focused. Avoid huge commits with multiple unrelated changes.
+
+### 4. Push to Your Fork
+
+```bash
+git push origin feature/your-feature-name
+```
+
+### 5. Create a Pull Request
+
+1. Visit your fork on GitHub
+2. Click "Compare & pull request"
+3. Fill in the PR template:
 
 ```markdown
-**Tipo**: [Bug | Feature | Documentação | Pergunta]
+## Description
+[What does this PR do?]
 
-**Descrição**
-[Descrição clara do problema]
+## Type of Change
+- [ ] New feature
+- [ ] Bug fix
+- [ ] Breaking change
+- [ ] Documentation update
 
-**Contexto**
-- Browser: [versão]
-- SO: [versão]
-- URL de referência: [se aplicável]
+## Related Issues
+Closes #123
 
-**Solução Proposta**
-[Se tiver ideias]
+## Testing
+- [x] Tested in Chrome
+- [x] Tested in Firefox
+- [x] Tested on mobile
+- [x] No console errors
+- [x] Validation works
+
+## Screenshots/Video
+[If applicable]
+
+## Checklist
+- [x] Code follows project style
+- [x] Documentation updated
+- [x] No breaking changes
+- [x] Tested locally
 ```
 
-## 📚 Recursos Úteis
+### 6. Code Review
 
-- [OpenRouter API Docs](https://openrouter.ai/docs)
+- Address feedback and suggestions
+- Push changes to the same branch (automatically updates PR)
+- Be open to constructive criticism
+- Ask questions if something is unclear
+
+### 7. Merge
+
+Once approved, your PR will be merged into `main` by maintainers.
+
+## 🚀 High-Priority Features
+
+### 🔴 Critical
+- [ ] Add multiple pricing API sources (OpenAI, Anthropic, Google)
+- [ ] Implement REST API backend
+- [ ] Add unit tests
+- [ ] Set up GitHub Actions CI/CD
+
+### 🟡 Important
+- [ ] Support more currencies
+- [ ] Add comparison charts
+- [ ] Export calculations to CSV/JSON
+- [ ] Price history tracking
+- [ ] Admin dashboard for pricing updates
+
+### 🟢 Nice-to-Have
+- [ ] Dark mode theme
+- [ ] Multiple language support
+- [ ] Keyboard shortcuts
+- [ ] Real-time price alerts
+- [ ] AI bot integration examples
+
+## 📊 Testing
+
+### Manual Testing Checklist
+
+```javascript
+// Test cases to verify
+1. Model Loading
+   - Models load on page refresh
+   - Models display in dropdown
+   - Model info shows pricing
+
+2. Calculations
+   - Input tokens × price = correct cost
+   - Output tokens × price = correct cost
+   - Total = input + output cost
+   - All currencies calculate correctly
+
+3. Validation
+   - Negative numbers rejected
+   - Non-numbers rejected
+   - Zero values handled properly
+   - Missing model shows error
+
+4. History
+   - Calculations saved to localStorage
+   - History persists on refresh
+   - Max 50 items stored
+   - Timestamp accurate
+
+5. UI/UX
+   - Tab switching works
+   - Form clearing works
+   - Success/error messages display
+   - Responsive on mobile
+   - No console errors
+```
+
+### Browser Compatibility
+
+Test on:
+- ✅ Chrome 90+
+- ✅ Firefox 88+
+- ✅ Safari 14+
+- ✅ Edge 90+
+- ✅ Mobile browsers
+
+## 📚 Resources
+
+### Learning
 - [MDN Web Docs](https://developer.mozilla.org)
-- [Git Cheat Sheet](https://github.github.com/training-kit/downloads/github-git-cheat-sheet.pdf)
-- [Conventional Commits](https://www.conventionalcommits.org)
+- [JavaScript.info](https://javascript.info)
+- [CSS-Tricks](https://css-tricks.com)
+- [GitHub Docs](https://docs.github.com)
 
-## 🎓 Aprenda Mais
-
-### Sobre LLMs e Preços
+### LLM & Pricing
+- [OpenRouter API](https://openrouter.ai/docs)
 - [OpenAI Pricing](https://openai.com/pricing)
 - [Anthropic Claude](https://www.anthropic.com)
 - [Google Vertex AI](https://cloud.google.com/vertex-ai)
 
-### Sobre Desenvolvimento Web
-- [HTML5 Specification](https://html.spec.whatwg.org)
-- [CSS-Tricks](https://css-tricks.com)
-- [JavaScript.info](https://javascript.info)
+### Tools
+- [Git Cheat Sheet](https://github.github.com/training-kit/downloads/github-git-cheat-sheet.pdf)
+- [Conventional Commits](https://www.conventionalcommits.org)
+- [Semantic Versioning](https://semver.org)
 
-## 🏆 Reconhecimento
+## 🆘 Need Help?
 
-Todos os contribuidores serão reconhecidos em:
-- README.md (seção de contribuidores)
+- 📖 **Read the Docs**: Check README.md and existing PRs
+- 💬 **Ask Questions**: Use GitHub Discussions
+- 🐛 **Report Issues**: Open an Issue with details
+- 📧 **Contact**: Check maintainer's profile
+
+## 🎓 Learning Path for New Contributors
+
+1. **Start Small**
+   - Read the code
+   - Fix a typo in docs
+   - Suggest a small improvement
+
+2. **Make a Simple Change**
+   - Add a comment
+   - Fix a small bug
+   - Update documentation
+
+3. **Add a Feature**
+   - Implement a planned feature
+   - Add proper validation
+   - Write clear commit messages
+
+4. **Become a Maintainer**
+   - Review other PRs
+   - Help guide new contributors
+   - Plan roadmap
+
+## 📝 Documentation
+
+When adding features, also update:
+- **README.md**: Add to features or usage section
+- **API Docs**: Update API tab in index.html if applicable
+- **Comments**: Add inline comments for complex logic
+- **CONTRIBUTING.md**: Update if process changes
+
+## 🔐 Security
+
+- Never commit API keys or secrets
+- Don't expose personal information
+- Report security issues privately
+- Follow best practices for user data
+
+## 🎉 Recognition
+
+All contributors are recognized in:
+- README.md Contributors section
 - Release notes
+- GitHub contributors page
 
-## ❓ Dúvidas?
+## 📜 License
 
-- 💬 Abra uma discussion no GitHub
-- 📧 Verifique o perfil para contato
-- 🐛 Abra uma issue para esclarecimentos
+By contributing, you agree your code will be licensed under the MIT License.
 
-## 📜 Licença
+## ⚖️ Legal
 
-Ao contribuir, você concorda que suas contribuições serão licenciadas sob a MIT License.
+- Contributions must be your own work
+- You grant the project rights to use your contributions
+- You confirm you have authority to license the work
 
 ---
 
-**Obrigado por contribuir!** 🙏
+## Quick Reference
 
-Qualquer dúvida, abra uma issue ou discussion. Feliz codificação! 🚀
+```bash
+# Fork and clone
+git clone https://github.com/YOUR-USERNAME/AI-Cost-Simulator-Dev.git
+
+# Create feature branch
+git checkout -b feature/description
+
+# Make changes, test locally
+# Commit with clear messages
+git commit -m "type: description"
+
+# Push to your fork
+git push origin feature/description
+
+# Create Pull Request on GitHub
+# Address feedback
+# Celebrate when merged! 🎉
+```
+
+**Happy Contributing!** 🚀
+
+Questions? Open a Discussion or Issue.
+
+Made with ❤️ by the AI Cost Simulator community
