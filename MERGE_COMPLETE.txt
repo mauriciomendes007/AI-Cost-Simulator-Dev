@@ -1,0 +1,8 @@
+✅ Merge concluído com sucesso!
+Feature/english-api-multi-currency mesclado para main em 2026-09-12
+
+Todas as mudanças foram aplicadas:
+- Interface em inglês
+- Suporte a 5 moedas (USD, EUR, GBP, JPY, BRL)
+- 3 abas funcionando (Calculator, API Docs, History)
+- Documentação completa (README, CONTRIBUTING, API)
