@@ -493,6 +493,7 @@
                                 <option value="EUR">EUR (€)</option>
                                 <option value="GBP">GBP (£)</option>
                                 <option value="JPY">JPY (¥)</option>
+                                <option value="BRL">BRL (R$)</option>
                             </select>
                         </div>
                     </div>
@@ -666,7 +667,8 @@ print(f"Cost: {data['data']['currency']}{data['data']['totalCost']}")</code></di
             'USD': 1.0,
             'EUR': 0.92,
             'GBP': 0.79,
-            'JPY': 149.50
+            'JPY': 149.50,
+            'BRL': 4.97
         };
 
         function switchTab(tabName, event) {
@@ -798,7 +800,7 @@ print(f"Cost: {data['data']['currency']}{data['data']['totalCost']}")</code></di
             const exchangeRate = exchangeRates[currency] || 1.0;
             const totalCost = totalCostUSD * exchangeRate;
 
-            const currencySymbol = { 'USD': '$', 'EUR': '€', 'GBP': '£', 'JPY': '¥' }[currency] || '$';
+            const currencySymbol = { 'USD': '$', 'EUR': '€', 'GBP': '£', 'JPY': '¥', 'BRL': 'R$' }[currency] || '$';
 
             document.getElementById("resultado").innerText = `${currencySymbol}${totalCost.toFixed(8)}`;
             document.getElementById("custoInput").innerText = `${currencySymbol}${(inputCost * exchangeRate).toFixed(8)}`;
@@ -856,7 +858,7 @@ print(f"Cost: {data['data']['currency']}{data['data']['totalCost']}")</code></di
             `;
 
             historicoCalculos.forEach(calc => {
-                const currencySymbol = { 'USD': '$', 'EUR': '€', 'GBP': '£', 'JPY': '¥' }[calc.currency] || '$';
+                const currencySymbol = { 'USD': '$', 'EUR': '€', 'GBP': '£', 'JPY': '¥', 'BRL': 'R$' }[calc.currency] || '$';
                 html += `
                     <tr>
                         <td>${calc.timestamp}</td>
