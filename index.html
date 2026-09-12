@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador Open-Source de Roteamento IA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 360px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen">
+    <!-- Header -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
+            <div class="flex items-center space-x-3">
+                <span class="bg-indigo-600 text-white font-black text-xl px-3 py-1 rounded-lg">⚡</span>
+                <div>
+                    <h1 class="font-bold text-slate-900 text-base sm:text-lg leading-tight">DevRouter: Simulador Open-Source</h1>
+                    <p class="text-xs text-slate-500 hidden sm:block">Arquitetura Híbrida de Custos de IA</p>
+                </div>
+            </div>
+            <nav class="flex space-x-4 text-xs font-medium">
+                <button onclick="scrollToSection('calculator')" class="text-slate-600 hover:text-indigo-600">Calculadora</button>
+                <button onclick="scrollToSection('plans')" class="text-slate-600 hover:text-indigo-600">Comparativo</button>
+                <button onclick="scrollToSection('catalog')" class="text-slate-600 hover:text-indigo-600">Catálogo API</button>
+                <button onclick="scrollToSection('community')" class="text-indigo-600 font-bold hover:text-indigo-800">Comunidade & Bot</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+        <!-- Hero -->
+        <section class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200">
+            <h2 class="text-2xl font-extrabold text-slate-900 mb-4">
+                Estratégia de Roteamento: Cursor Pro + API de Reforço
+            </h2>
+            <p class="text-slate-600 leading-relaxed mb-6">
+                Este é um projeto colaborativo (Open-Source) criado para ajudar desenvolvedores a pararem de gastar dinheiro à toa com planos corporativos. Use sua IDE favorita (como o <strong>Cursor Pro</strong>) para tarefas base, e deixe que este simulador mostre como rotear tarefas pesadas para <strong>DeepSeek API</strong> ou <strong>xAI</strong> economizando dezenas de dólares.
+            </p>
+        </section>
+
+        <!-- Calculator -->
+        <section id="calculator" class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+            <h3 class="text-xl font-bold text-slate-900 mb-6">Calculadora de Custo de API Extra (Além da IDE)</h3>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- Controls -->
+                <div class="lg:col-span-6 space-y-5 bg-slate-50 p-6 rounded-xl border border-slate-200">
+                    <div>
+                        <label class="text-sm font-semibold text-slate-700 block mb-2">Modelo de IA (Motor da API)</label>
+                        <select id="input-model" class="w-full p-2.5 bg-white border border-slate-300 rounded-lg text-sm font-medium">
+                            <option value="deepseek-flash" selected>DeepSeek V4.1 Flash (Off-Peak) — $0.15 in / $0.60 out</option>
+                            <option value="deepseek-pro">DeepSeek V4 Pro (Off-Peak) — $0.66 in / $1.98 out</option>
+                            <option value="grok-build-0.1">xAI grok-build-0.1 — $1.00 in / $2.00 out</option>
+                            <option value="grok-4.6">xAI grok-4.6 — $2.00 in / $6.00 out</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="text-sm font-semibold text-slate-700">Comandos CLI/Dia Útil Excedentes</label>
+                            <span id="val-daily-calls" class="text-sm font-bold text-indigo-600">30</span>
+                        </div>
+                        <input type="range" id="input-daily-calls" min="5" max="200" step="5" value="30" class="w-full accent-indigo-600">
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="text-sm font-semibold text-slate-700">Tamanho do Contexto (Tokens)</label>
+                            <span id="val-input-tokens" class="text-sm font-bold text-indigo-600">80.000</span>
+                        </div>
+                        <input type="range" id="input-tokens" min="10000" max="250000" step="5000" value="80000" class="w-full accent-indigo-600">
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="text-sm font-semibold text-slate-700">Aproveitamento de Cache (%)</label>
+                            <span id="val-cache-percent" class="text-sm font-bold text-indigo-600">75%</span>
+                        </div>
+                        <input type="range" id="input-cache" min="0" max="95" step="5" value="75" class="w-full accent-indigo-600">
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="text-sm font-semibold text-slate-700">Subagentes Paralelos</label>
+                            <span id="val-subagents" class="text-sm font-bold text-indigo-600">2</span>
+                        </div>
+                        <input type="range" id="input-subagents" min="1" max="8" step="1" value="2" class="w-full accent-indigo-600">
+                    </div>
+                </div>
+
+                <!-- Outputs -->
+                <div class="lg:col-span-6 space-y-6">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                            <span class="text-xs text-slate-500 block">Custo Excedente (Mensal)</span>
+                            <span id="res-total-api" class="text-3xl font-black text-indigo-600">$0.00</span>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                            <span class="text-xs text-slate-500 block">Custo Fixo IDE (Ex: Cursor Pro)</span>
+                            <span class="text-3xl font-black text-slate-800">$20.00</span>
+                        </div>
+                    </div>
+                    
+                    <div class="p-4 rounded-xl border bg-emerald-50 border-emerald-200">
+                        <h4 class="font-bold text-emerald-950 text-sm">Custo Total da Pilha Híbrida</h4>
+                        <p class="text-emerald-800 font-black text-2xl mt-1"><span id="res-combined-cost">$20.00</span> <span class="text-xs font-normal">/ mês</span></p>
+                        <p class="text-xs text-emerald-700 mt-2">Combinar sua IDE com roteamento inteligente mantém seu custo drasticamente menor que planos empresariais all-in-one.</p>
+                    </div>
+
+                    <div class="chart-container bg-white p-2 rounded-xl border border-slate-200 mt-4">
+                        <canvas id="chartWorkload"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Plans Comparison -->
+        <section id="plans" class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+            <h3 class="text-xl font-bold text-slate-900 mb-4">Matriz de Ferramentas de Código (Cursor vs Grok vs API)</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm text-slate-600 border-collapse">
+                    <thead class="bg-slate-50 text-slate-900 uppercase text-xs font-semibold border-b border-slate-200">
+                        <tr>
+                            <th class="p-4">Recurso / Plataforma</th>
+                            <th class="p-4">IDE Pro ($20/mês)</th>
+                            <th class="p-4">Assinaturas Fixas (ex: $30/mês)</th>
+                            <th class="p-4">API Pay-As-You-Go</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200">
+                        <tr class="hover:bg-slate-50">
+                            <td class="p-4 font-bold text-slate-900">Autocomplete</td>
+                            <td class="p-4 text-emerald-600 font-semibold">✓ Ilimitado</td>
+                            <td class="p-4 text-slate-500">Geralmente ausente</td>
+                            <td class="p-4 text-slate-500">Depende de cliente</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50">
+                            <td class="p-4 font-bold text-slate-900">Cota de IA</td>
+                            <td class="p-4 font-medium text-slate-800">Pool flexível</td>
+                            <td class="p-4 font-medium text-slate-800">Pool Semanal (Trava)</td>
+                            <td class="p-4 text-emerald-600 font-semibold">✓ Sob demanda</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50">
+                            <td class="p-4 font-bold text-slate-900">Múltiplos Modelos</td>
+                            <td class="p-4 text-emerald-600">✓ Vários motores</td>
+                            <td class="p-4 text-slate-500">Apenas ecossistema próprio</td>
+                            <td class="p-4 text-emerald-600">✓ Controle total</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- API Catalog -->
+        <section id="catalog" class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+            <h3 class="text-xl font-bold text-slate-900 mb-4">Catálogo Open-Source de APIs para Roteamento</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs text-slate-600 border-collapse">
+                    <thead class="bg-slate-100 font-semibold text-slate-800">
+                        <tr>
+                            <th class="p-3">Provedor & Modelo</th>
+                            <th class="p-3">Input / 1M</th>
+                            <th class="p-3">Cache Hit / 1M</th>
+                            <th class="p-3">Output / 1M</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200">
+                        <tr>
+                            <td class="p-3 font-bold text-blue-600">DeepSeek V4.1 Flash (Off-Peak)</td>
+                            <td class="p-3">$0.15</td>
+                            <td class="p-3 text-emerald-600">$0.003</td>
+                            <td class="p-3">$0.60</td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 font-bold text-blue-600">DeepSeek V4 Pro (Off-Peak)</td>
+                            <td class="p-3">$0.66</td>
+                            <td class="p-3 text-emerald-600">$0.022</td>
+                            <td class="p-3">$1.98</td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 font-bold text-indigo-600">xAI grok-build-0.1</td>
+                            <td class="p-3">$1.00</td>
+                            <td class="p-3 text-emerald-600">$0.20</td>
+                            <td class="p-3">$2.00</td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 font-bold text-slate-800">xAI grok-4.6</td>
+                            <td class="p-3">$2.00</td>
+                            <td class="p-3 text-emerald-600">$0.40</td>
+                            <td class="p-3">$6.00</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Community & BYOK Chat Integration -->
+        <section id="community" class="bg-indigo-900 rounded-2xl p-6 sm:p-8 shadow-md border border-indigo-700 text-white mt-8 mb-12">
+            <h3 class="text-2xl font-bold mb-3 flex items-center space-x-3">
+                <span>🤖</span>
+                <span>Assistente DevRouter (Modo BYOK)</span>
+            </h3>
+            <p class="text-indigo-200 text-sm mb-6 leading-relaxed max-w-3xl">
+                Tire dúvidas sobre roteamento de IA, configuração do Cursor ou sugira evoluções. <strong>Traga a sua própria chave (BYOK)</strong>: insira sua API Key gratuita do <a href="https://aistudio.google.com/" target="_blank" class="underline hover:text-white font-bold">Google AI Studio</a> para conversar diretamente aqui, sem custos de servidor para o criador deste projeto.
+            </p>
+            
+            <div class="bg-indigo-950 p-4 sm:p-6 rounded-xl border border-indigo-800 flex flex-col space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+                    <label class="text-xs font-bold text-indigo-300 uppercase tracking-wider whitespace-nowrap">Sua Chave API (Gemini):</label>
+                    <input type="password" id="gemini-api-key" placeholder="AIzaSy..." class="flex-1 bg-indigo-900 border border-indigo-700 rounded-lg p-2 text-sm text-white focus:outline-none focus:border-indigo-400 font-mono">
+                </div>
+                
+                <div id="chat-box" class="h-64 bg-indigo-900 border border-indigo-700 rounded-lg p-4 overflow-y-auto space-y-3 flex flex-col text-sm shadow-inner">
+                    <div class="self-start bg-indigo-800 text-indigo-100 p-3 rounded-lg max-w-[85%] border border-indigo-700 shadow-sm">
+                        Olá! Sou o assistente local do DevRouter. Insira sua chave Gemini acima e faça sua pergunta. <br><br><i>Sua chave não é salva em nenhum banco de dados, ela opera estritamente no seu navegador local via requisição direta (fetch).</i>
+                    </div>
+                </div>
+                
+                <div class="flex space-x-2">
+                    <input type="text" id="chat-input" placeholder="Digite sua dúvida sobre roteamento ou configuração..." class="flex-1 bg-indigo-900 border border-indigo-700 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-indigo-400">
+                    <button onclick="sendChatMessage()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-6 py-2 rounded-lg transition shadow-md">
+                        Enviar
+                    </button>
+                </div>
+            </div>
+
+            <div class="mt-6 text-center">
+                <a href="https://github.com/new" target="_blank" class="bg-indigo-800 border border-indigo-500 text-white px-6 py-3 rounded-xl font-bold text-sm hover:bg-indigo-700 transition inline-block shadow-md">
+                    ⭐ Fazer um Fork e Colaborar no GitHub
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- App Logic -->
+    <script>
+        const inputModel = document.getElementById('input-model');
+        const inputDailyCalls = document.getElementById('input-daily-calls');
+        const inputTokens = document.getElementById('input-tokens');
+        const inputCache = document.getElementById('input-cache');
+        const inputSubagents = document.getElementById('input-subagents');
+
+        const valDailyCalls = document.getElementById('val-daily-calls');
+        const valInputTokens = document.getElementById('val-input-tokens');
+        const valCachePercent = document.getElementById('val-cache-percent');
+        const valSubagents = document.getElementById('val-subagents');
+
+        const resTotalApi = document.getElementById('res-total-api');
+        const resCombinedCost = document.getElementById('res-combined-cost');
+        
+        let chartInstance = null;
+
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function calculateCosts() {
+            const modelChoice = inputModel.value;
+            const dailyCalls = parseInt(inputDailyCalls.value);
+            const inputCtx = parseInt(inputTokens.value);
+            const cachePct = parseInt(inputCache.value) / 100;
+            const subagentCount = parseInt(inputSubagents.value);
+
+            valDailyCalls.textContent = dailyCalls;
+            valInputTokens.textContent = inputCtx.toLocaleString('pt-BR');
+            valCachePercent.textContent = (cachePct * 100) + '%';
+            valSubagents.textContent = subagentCount;
+
+            let inputRate, cacheRate, outputRate, outTokens;
+
+            if (modelChoice === 'deepseek-flash') {
+                inputRate = 0.15; cacheRate = 0.003; outputRate = 0.60; outTokens = 3000;
+            } else if (modelChoice === 'deepseek-pro') {
+                inputRate = 0.66; cacheRate = 0.022; outputRate = 1.98; outTokens = 4000;
+            } else if (modelChoice === 'grok-4.6') {
+                inputRate = 2.00; cacheRate = 0.40; outputRate = 6.00; outTokens = 4000;
+                if (inputCtx > 200000) { inputRate *= 2; cacheRate *= 2; outputRate *= 2; }
+            } else { 
+                inputRate = 1.00; cacheRate = 0.20; outputRate = 2.00; outTokens = 3000;
+                if (inputCtx > 200000) { inputRate *= 2; cacheRate *= 2; outputRate *= 2; }
+            }
+
+            const nonCachedInput = inputCtx * (1 - cachePct);
+            const cachedInput = inputCtx * cachePct;
+
+            const costInput = (nonCachedInput / 1000000) * inputRate;
+            const costCache = (cachedInput / 1000000) * cacheRate;
+            const costOutput = (outTokens / 1000000) * outputRate;
+
+            const singleCallCost = (costInput + costCache + costOutput) * subagentCount;
+            const monthlyApiCost = singleCallCost * (dailyCalls * 22);
+
+            resTotalApi.textContent = '$' + monthlyApiCost.toFixed(2);
+            resCombinedCost.textContent = '$' + (20 + monthlyApiCost).toFixed(2);
+
+            updateChart(singleCallCost);
+        }
+
+        function initChart() {
+            const ctx = document.getElementById('chartWorkload').getContext('2d');
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['10 cmds', '30 cmds', '60 cmds', '100 cmds', '150 cmds'],
+                    datasets: [
+                        {
+                            label: 'IDE Pro + API',
+                            data: [0, 0, 0, 0, 0],
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            fill: true,
+                            tension: 0.3
+                        },
+                        {
+                            label: 'Assinatura Avançada ($60)',
+                            data: [60, 60, 60, 60, 60],
+                            borderColor: '#94a3b8',
+                            borderDash: [5, 5],
+                            pointRadius: 0
+                        },
+                        {
+                            label: 'Assinatura Enterprise ($100)',
+                            data: [100, 100, 100, 100, 100],
+                            borderColor: '#e11d48',
+                            borderDash: [5, 5],
+                            pointRadius: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'top', labels: { boxWidth: 12 } } },
+                    scales: { y: { beginAtZero: true, title: { display: true, text: 'Custo Total Mensal (USD)' } } }
+                }
+            });
+        }
+
+        function updateChart(singleCallCost) {
+            if (!chartInstance) return;
+            const calls = [10, 30, 60, 100, 150];
+            const combinedData = calls.map(c => 20 + (c * 22 * singleCallCost));
+            chartInstance.data.datasets[0].data = combinedData;
+            chartInstance.update();
+        }
+
+        [inputModel, inputDailyCalls, inputTokens, inputCache, inputSubagents].forEach(el => {
+            el.addEventListener('input', calculateCosts);
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initChart();
+            calculateCosts();
+        });
+
+        // Chat Bot Logic (BYOK Model)
+        async function sendChatMessage() {
+            const apiKey = document.getElementById('gemini-api-key').value.trim();
+            const inputEl = document.getElementById('chat-input');
+            const message = inputEl.value.trim();
+            const chatBox = document.getElementById('chat-box');
+
+            if (!apiKey) {
+                alert('Por favor, insira sua chave da API do Google Gemini gerada no AI Studio.');
+                return;
+            }
+            if (!message) return;
+
+            // Add user message to chat UI
+            const userMsg = document.createElement('div');
+            userMsg.className = 'self-end bg-indigo-500 text-white p-3 rounded-lg max-w-[85%] shadow-sm';
+            userMsg.textContent = message;
+            chatBox.appendChild(userMsg);
+            
+            inputEl.value = '';
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // Add loading placeholder
+            const loadingMsg = document.createElement('div');
+            loadingMsg.className = 'self-start bg-indigo-800 text-indigo-300 p-3 rounded-lg max-w-[85%] italic border border-indigo-700';
+            loadingMsg.textContent = 'Processando...';
+            chatBox.appendChild(loadingMsg);
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            try {
+                // Call Gemini API directly from the browser using the user's key
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ 
+                            parts: [{ 
+                                text: "Atue como assistente de um projeto open-source chamado DevRouter focado em otimizar custos de IA para desenvolvedores com ferramentas como Cursor, xAI e DeepSeek. Responda de forma concisa e útil. A pergunta do usuário é: " + message 
+                            }] 
+                        }]
+                    })
+                });
+
+                const data = await response.json();
+                chatBox.removeChild(loadingMsg);
+
+                if (data.error) {
+                    throw new Error(data.error.message || 'Falha ao autenticar na API.');
+                }
+
+                const botText = data.candidates[0].content.parts[0].text;
+                
+                // Add bot response to chat UI
+                const botMsg = document.createElement('div');
+                botMsg.className = 'self-start bg-indigo-800 text-indigo-100 p-3 rounded-lg max-w-[85%] border border-indigo-700 shadow-sm';
+                // Simple regex to format basic markdown bold text returned by Gemini
+                botMsg.innerHTML = botText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                chatBox.appendChild(botMsg);
+                chatBox.scrollTop = chatBox.scrollHeight;
+
+            } catch (error) {
+                chatBox.removeChild(loadingMsg);
+                const errorMsg = document.createElement('div');
+                errorMsg.className = 'self-start bg-red-900 text-red-100 p-3 rounded-lg max-w-[85%] border border-red-700 shadow-sm';
+                errorMsg.textContent = 'Erro: Verifique sua chave API. Detalhe: ' + error.message;
+                chatBox.appendChild(errorMsg);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+        }
+
+        // Allow 'Enter' key to send message
+        document.getElementById('chat-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                sendChatMessage();
+            }
+        });
+    </script>
+</body>
+</html>
